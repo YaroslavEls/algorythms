@@ -1,7 +1,7 @@
 #include <stdio.h>
 #include <math.h>
 
-double recursion(int n, double x, int i, double previous)
+double recursion3(int n, double x, int i, double previous)
 {
     double current;
     double sum = 0;
@@ -17,7 +17,7 @@ double recursion(int n, double x, int i, double previous)
     printf("element = %f    sum = %f    iteration = %d\n", current, sum, i);
 
     if (i < n) {
-        sum = recursion(n, x, i + 1, previous);
+        sum = recursion3(n, x, i + 1, previous);
     }
 
     sum += current;
@@ -33,7 +33,7 @@ int main()
     double argument = 5;
     double answer = log(argument);
 
-    printf("Sum: %f\n", recursion(iterationsCount, argument, 1, 0));
+    printf("Sum: %f\n", recursion3(iterationsCount, argument, 1, 0));
     printf("ln(x) = %f\n", answer);
     printf("x = %.0f\n", argument);
     printf("Iterations done: %d\n", iterationsCount);
