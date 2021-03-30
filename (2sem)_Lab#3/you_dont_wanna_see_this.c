@@ -69,7 +69,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpszCmdLi
                       "Laboratory #3. Yaroslav Tereschenko",
                       WS_OVERLAPPEDWINDOW,
                       150, 150,
-                      650, 650,
+                      800, 800,
                       (HWND)NULL, (HMENU)NULL,
                       (HINSTANCE)hInstance, (HINSTANCE)NULL);
 
@@ -111,7 +111,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT messg, WPARAM wParam, LPARAM lParam)
         char *nn[12] = {"1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11", "12"};
         int nx[12] = {};
         int ny[12] = {};
-        int num = 100;
+        int num = 150;
         for(int i = 0; i < 12; i++)
         {
             if(i == 0)
@@ -159,7 +159,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT messg, WPARAM wParam, LPARAM lParam)
 
         SelectObject(hdc, KPen);
 
-        ///////////////////////// Оставь надежду всяк сюда смотрящий \\\\\\\\\\\\\\\\\\\\\\\\\
+        ///////////////////////// Мне очень жаль что вам приходиться это читать \\\\\\\\\\\\\\\\\\\\\\\\\
 
         for(int i = 0; i < 12; i++)
         {
@@ -177,12 +177,17 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT messg, WPARAM wParam, LPARAM lParam)
                             if(nx[i] < nx[j])
                             {
                                 Arc(hdc, nx[i], ny[i]-50, nx[j], ny[j]+50, nx[j], ny[j], nx[i], ny[i]);
-                                arrow(-45.0,nx[j]-dx*0.3,ny[j]-dy);
+                                arrow(-45.0,nx[j]-dx*0.3,ny[j]-dy+4);
                             }
                             else if(nx[i] > nx[j])
                             {
                                 Arc(hdc, nx[j], ny[j]-40, nx[i], ny[i]+40, nx[i], ny[i], nx[j], ny[j]);
-                                arrow(-145, nx[j]+8, ny[j]-dy+3);
+                                arrow(-155, nx[j]+9, ny[j]-dy+5);
+                            }
+                            else if (i == j)
+                            {
+                                Arc(hdc, nx[j], ny[j], nx[j]-50, ny[j]-50, nx[j], ny[j], nx[j], ny[j]);
+                                arrow(-90, nx[j], ny[j]-dy);
                             }
                         }
                         else if(i > 5 && i < 10)
@@ -197,6 +202,16 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT messg, WPARAM wParam, LPARAM lParam)
                                 Arc(hdc, nx[i], ny[i]-40, nx[j], ny[j]+40, nx[j], ny[j], nx[i], ny[i]);
                                 arrow(145, nx[j]+8, ny[j]-dy+3);
                             }
+                            else if (i == j)
+                            {
+                                Arc(hdc, nx[j], ny[j], nx[j]+50, ny[j]+50, nx[j], ny[j], nx[j], ny[j]);
+                                arrow(90, nx[j], ny[j]+dy);
+                            }
+                        }
+                        else if (i == j)
+                        {
+                            Arc(hdc, nx[j], ny[j], nx[j]-50, ny[j]+50, nx[j], ny[j], nx[j], ny[j]);
+                            arrow(0, nx[j]-dx, ny[j]);
                         }
 
                     }
@@ -208,214 +223,259 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT messg, WPARAM wParam, LPARAM lParam)
                             if(ny[i] < ny[j])
                             {
                                 Arc(hdc, nx[i]-40, ny[i], nx[j]+40, ny[j], nx[j], ny[j], nx[i], ny[i]);
-                                arrow(-125,nx[j]+dx*0.8+1,ny[j]-dy+5);
+                                arrow(-115,nx[j]+dx*0.7,ny[j]-dy+5);
                             }
                             else if(ny[i] > ny[j])
                             {
                                 Arc(hdc, nx[j]-50, ny[j], nx[i]+50, ny[i], nx[i], ny[i], nx[j], ny[j]);
-                                arrow(125,nx[j]+dx,ny[j]+dy*0.2);
+                                arrow(135,nx[j]+dx*0.7,ny[j]+dy*0.3);
                             }
                         }
                         else if(i > 8)
                         {
+                            if(A[i][j] == A[j][i] && i != j)
+                            {
+                                Arc(hdc, nx[i]-65, ny[i], nx[j]+65, ny[j], nx[j], ny[j], nx[i], ny[i]);
+                                arrow(-45,nx[i]-dx-1,ny[i]-dy+11);
+                            }
                             if(ny[i] < ny[j])
                             {
                                 Arc(hdc, nx[j]-40, ny[j], nx[i]+40, ny[i], nx[i], ny[i], nx[j], ny[j]);
-                                arrow(-60,nx[j]-dx,ny[j]-dy+7);
+                                arrow(-60,nx[j]-dx+3,ny[j]-dy+7);
                             }
                             else if(ny[i] > ny[j])
                             {
                                 Arc(hdc, nx[i]-40, ny[i], nx[j]+40, ny[j], nx[j], ny[j], nx[i], ny[i]);
-                                arrow(55,nx[j]-dx,ny[j]+dy-7);
+                                arrow(55,nx[j]-dx+3,ny[j]+dy-7);
                             }
                         }
 
                     } else
                     {
-                        LineTo(hdc, nx[j], ny[j]);
+                        if(A[i][j] == A[j][i] && i != j)
+                        {
+                            MoveToEx(hdc, nx[i]+5, ny[i]+5, NULL);
+                            LineTo(hdc, nx[j]+5, ny[j]+5);
+                            MoveToEx(hdc, nx[j]-5, ny[j]-5, NULL);
+                            LineTo(hdc, nx[i]-5, ny[i]-5);
 
-                        if(nx[i] == nx[j])
-                        {
-                            if(ny[j] == ny[i] + num)
+                            if( i < j)
                             {
-                                arrow(-90, nx[j], ny[j]-dy);
-                            }
-                            else if(ny[j] == ny[i] - num)
-                            {
-                                arrow(90, nx[j], ny[j]+dy);
-                            }
-                        }
-                        else if(ny[i] == ny[j])
-                        {
-                            if(nx[j] == nx[i] + num)
-                            {
-                                arrow(0, nx[j]-dx, ny[j]);
-                            }
-                            else if(nx[j] == nx[i] - num)
-                            {
-                                arrow(180, nx[j]+dx, ny[j]);
-                            }
-                        }
-                        else if(ny[i] == ny[j] - 3*num)
-                        {
-                            if(nx[i] == nx[j] - num)
-                            {
-                                arrow(-65, nx[j]-4, ny[j]-dy);
-                            }
-                            else if(nx[i] == nx[j] + num)
-                            {
-                                arrow(-120, nx[j]+4, ny[j]-dy);
-                            }
-                            else if(nx[i] == nx[j] - 2*num)
-                            {
-                                arrow(-60, nx[j]+4, ny[j]-dy);
-                            }
-                            else if(nx[i] == nx[j] + 2*num)
-                            {
-                                arrow(-110, nx[j]+4, ny[j]-dy);
-                            }
-                            else if(nx[i] == nx[j] - 3*num)
-                            {
-                                arrow(-50, nx[j]+4, ny[j]-dy);
-                            }
-                            else if(nx[i] == nx[j] + 3*num)
-                            {
-                                arrow(-100, nx[j]+4, ny[j]-dy);
+                                if(ny[i] == ny[j] && (nx[j] == nx[i] + num || nx[j] == nx[i] - num))
+                                {
+                                    arrow(0, nx[j]-dx, ny[j]-5);
+                                    arrow(180, nx[i]+dx, ny[i]+5);
+                                }
+                                else if((ny[i] == ny[j] - 3*num || ny[i] == ny[j] + 3*num) && (nx[i] == nx[j] - num || nx[i] == nx[j] + num))
+                                {
+                                    arrow(-110, nx[j]+dx-5, ny[j]-dy+3);
+                                    arrow(70, nx[i]-11, ny[i]+dy-2);
+                                }
+                                else if((ny[i] == ny[j] - 2*num || ny[i] == ny[j] + 2*num) && (nx[i] == nx[j] - 3*num || nx[i] == nx[j] + 3*num))
+                                {
+                                    arrow(-145, nx[j]+10, ny[j]-dy+2);
+                                    arrow(40, nx[i]-10, ny[i]+dy-2);
+
+                                }
+                                else if((ny[i] == ny[j] - num || ny[i] == ny[j] + num) && (nx[i] == nx[j] - 3*num || nx[i] == nx[j] + 3*num))
+                                {
+                                    arrow(-25, nx[j]-14, ny[j]-dy+10);
+                                    arrow(160, nx[i]+dx-2, ny[i]+8);
+                                }
+                                else if((ny[i] == ny[j] - num || ny[i] == ny[j] + num) && (nx[i] == nx[j] - 2*num || nx[i] == nx[j] + 2*num))
+                                {
+                                    arrow(-155, nx[j]+dx-4, ny[j]-dy+4);
+                                    arrow(30, nx[i]-12, ny[i]+dy-2);
+                                }
                             }
                         }
-                        else if(ny[i] == ny[j] + 3*num)
+                        else
                         {
-                            if(nx[i] == nx[j] - num)
+                            LineTo(hdc, nx[j], ny[j]);
+
+                            if(nx[i] == nx[j])
                             {
-                                arrow(65, nx[j]-4, ny[j]+dy);
+                                if(ny[j] == ny[i] + num)
+                                {
+                                    arrow(-90, nx[j], ny[j]-dy);
+                                }
+                                else if(ny[j] == ny[i] - num)
+                                {
+                                    arrow(90, nx[j], ny[j]+dy);
+                                }
                             }
-                            else if(nx[i] == nx[j] + num)
+                            else if(ny[i] == ny[j])
                             {
-                                arrow(120, nx[j]+4, ny[j]+dy);
+                                if(nx[j] == nx[i] + num)
+                                {
+                                    arrow(0, nx[j]-dx, ny[j]);
+                                }
+                                else if(nx[j] == nx[i] - num)
+                                {
+                                    arrow(180, nx[j]+dx, ny[j]);
+                                }
                             }
-                            else if(nx[i] == nx[j] - 2*num)
+                            else if(ny[i] == ny[j] - 3*num)
                             {
-                                arrow(60, nx[j]-7, ny[j]+dy);
+                                if(nx[i] == nx[j] - num)
+                                {
+                                    arrow(-65, nx[j]-4, ny[j]-dy);
+                                }
+                                else if(nx[i] == nx[j] + num)
+                                {
+                                    arrow(-120, nx[j]+4, ny[j]-dy);
+                                }
+                                else if(nx[i] == nx[j] - 2*num)
+                                {
+                                    arrow(-60, nx[j]+4, ny[j]-dy);
+                                }
+                                else if(nx[i] == nx[j] + 2*num)
+                                {
+                                    arrow(-110, nx[j]+4, ny[j]-dy);
+                                }
+                                else if(nx[i] == nx[j] - 3*num)
+                                {
+                                    arrow(-50, nx[j]+4, ny[j]-dy);
+                                }
+                                else if(nx[i] == nx[j] + 3*num)
+                                {
+                                    arrow(-100, nx[j]+4, ny[j]-dy);
+                                }
                             }
-                            else if(nx[i] == nx[j] + 2*num)
+                            else if(ny[i] == ny[j] + 3*num)
                             {
-                                arrow(125, nx[j]+10, ny[j]+dy);
+                                if(nx[i] == nx[j] - num)
+                                {
+                                    arrow(65, nx[j]-4, ny[j]+dy);
+                                }
+                                else if(nx[i] == nx[j] + num)
+                                {
+                                    arrow(120, nx[j]+4, ny[j]+dy);
+                                }
+                                else if(nx[i] == nx[j] - 2*num)
+                                {
+                                    arrow(60, nx[j]-7, ny[j]+dy);
+                                }
+                                else if(nx[i] == nx[j] + 2*num)
+                                {
+                                    arrow(125, nx[j]+10, ny[j]+dy);
+                                }
+                                else if(nx[i] == nx[j] - 3*num)
+                                {
+                                    arrow(50, nx[j]+4, ny[j]+dy);
+                                }
+                                else if(nx[i] == nx[j] + 3*num)
+                                {
+                                    arrow(100, nx[j]+4, ny[j]+dy);
+                                }
                             }
-                            else if(nx[i] == nx[j] - 3*num)
+                            else if(ny[i] == ny[j] - 2*num)
                             {
-                                arrow(50, nx[j]+4, ny[j]+dy);
+                                if(nx[i] == nx[j] - num)
+                                {
+                                    arrow(-70, nx[j]-14, ny[j]+dy);
+                                }
+                                else if(nx[i] == nx[j] + num)
+                                {
+                                    arrow(-140, nx[j]+14, ny[j]+dy);
+                                }
+                                else if(nx[i] == nx[j] - 2*num)
+                                {
+                                    arrow(-55, nx[j]-14, ny[j]-dy+4);
+                                }
+                                else if(nx[i] == nx[j] + 2*num)
+                                {
+                                    arrow(-110, nx[j]+14, ny[j]-dy+4);
+                                }
+                                else if(nx[i] == nx[j] - 3*num)
+                                {
+                                    arrow(-75, nx[j]-14, ny[j]-dy-8);
+                                }
+                                else if(nx[i] == nx[j] + 3*num)
+                                {
+                                    arrow(-140, nx[j]+14, ny[j]-dy+8);
+                                }
                             }
-                            else if(nx[i] == nx[j] + 3*num)
+                            else if(ny[i] == ny[j] + 2*num)
                             {
-                                arrow(100, nx[j]+4, ny[j]+dy);
+                                if(nx[i] == nx[j] - num)
+                                {
+                                    arrow(70, nx[j]-14, ny[j]+dy);
+                                }
+                                else if(nx[i] == nx[j] + num)
+                                {
+                                    arrow(120, nx[j]+7, ny[j]+dy);
+                                }
+                                else if(nx[i] == nx[j] - 2*num)
+                                {
+                                    arrow(55, nx[j]-14, ny[j]+dy);
+                                }
+                                else if(nx[i] == nx[j] + 2*num)
+                                {
+                                    arrow(110, nx[j]+14, ny[j]+dy);
+                                }
+                                else if(nx[i] == nx[j] - 3*num)
+                                {
+                                    arrow(40, nx[j]-14, ny[j]+dy-6);
+                                }
+                                else if(nx[i] == nx[j] + 3*num)
+                                {
+                                    arrow(140, nx[j]+15, ny[j]+dy-7);
+                                }
                             }
-                        }
-                        else if(ny[i] == ny[j] - 2*num)
-                        {
-                            if(nx[i] == nx[j] - num)
+                            else if(ny[i] == ny[j] - num)
                             {
-                                arrow(-70, nx[j]-14, ny[j]+dy);
+                                if(nx[i] == nx[j] - num)
+                                {
+                                    arrow(-70, nx[j]-14, ny[j]+dy);
+                                }
+                                else if(nx[i] == nx[j] + num)
+                                {
+                                    arrow(-140, nx[j]+14, ny[j]+dy);
+                                }
+                                else if(nx[i] == nx[j] - 2*num)
+                                {
+                                    arrow(-55, nx[j]-14, ny[j]-dy);
+                                }
+                                else if(nx[i] == nx[j] + 2*num)
+                                {
+                                    arrow(-145, nx[j]+14, ny[j]-dy+10);
+                                }
+                                else if(nx[i] == nx[j] - 3*num)
+                                {
+                                    arrow(-25, nx[j]-14, ny[j]-dy+13);
+                                }
+                                else if(nx[i] == nx[j] + 3*num)
+                                {
+                                    arrow(-160, nx[j]+16, ny[j]-dy+12);
+                                }
                             }
-                            else if(nx[i] == nx[j] + num)
+                            else if(ny[i] == ny[j] + num)
                             {
-                                arrow(-140, nx[j]+14, ny[j]+dy);
-                            }
-                            else if(nx[i] == nx[j] - 2*num)
-                            {
-                                arrow(-55, nx[j]-14, ny[j]-dy+4);
-                            }
-                            else if(nx[i] == nx[j] + 2*num)
-                            {
-                                arrow(-110, nx[j]+14, ny[j]-dy+4);
-                            }
-                            else if(nx[i] == nx[j] - 3*num)
-                            {
-                                arrow(-75, nx[j]-14, ny[j]-dy-8);
-                            }
-                            else if(nx[i] == nx[j] + 3*num)
-                            {
-                                arrow(-140, nx[j]+14, ny[j]-dy+8);
-                            }
-                        }
-                        else if(ny[i] == ny[j] + 2*num)
-                        {
-                            if(nx[i] == nx[j] - num)
-                            {
-                                arrow(70, nx[j]-14, ny[j]+dy);
-                            }
-                            else if(nx[i] == nx[j] + num)
-                            {
-                                arrow(120, nx[j]+7, ny[j]+dy);
-                            }
-                            else if(nx[i] == nx[j] - 2*num)
-                            {
-                                arrow(55, nx[j]-14, ny[j]+dy);
-                            }
-                            else if(nx[i] == nx[j] + 2*num)
-                            {
-                                arrow(110, nx[j]+14, ny[j]+dy);
-                            }
-                            else if(nx[i] == nx[j] - 3*num)
-                            {
-                                arrow(40, nx[j]-14, ny[j]+dy-6);
-                            }
-                            else if(nx[i] == nx[j] + 3*num)
-                            {
-                                arrow(140, nx[j]+15, ny[j]+dy-7);
-                            }
-                        }
-                        else if(ny[i] == ny[j] - num)
-                        {
-                            if(nx[i] == nx[j] - num)
-                            {
-                                arrow(-70, nx[j]-14, ny[j]+dy);
-                            }
-                            else if(nx[i] == nx[j] + num)
-                            {
-                                arrow(-140, nx[j]+14, ny[j]+dy);
-                            }
-                            else if(nx[i] == nx[j] - 2*num)
-                            {
-                                arrow(-55, nx[j]-14, ny[j]-dy);
-                            }
-                            else if(nx[i] == nx[j] + 2*num)
-                            {
-                                arrow(-145, nx[j]+14, ny[j]-dy+10);
-                            }
-                            else if(nx[i] == nx[j] - 3*num)
-                            {
-                                arrow(-25, nx[j]-14, ny[j]-dy+13);
-                            }
-                            else if(nx[i] == nx[j] + 3*num)
-                            {
-                                arrow(-160, nx[j]+16, ny[j]-dy+12);
-                            }
-                        }
-                        else if(ny[i] == ny[j] + num)
-                        {
-                            if(nx[i] == nx[j] - num)
-                            {
-                                arrow(70, nx[j]-14, ny[j]+dy);
-                            }
-                            else if(nx[i] == nx[j] + num)
-                            {
-                                arrow(120, nx[j]+7, ny[j]+dy);
-                            }
-                            else if(nx[i] == nx[j] - 2*num)
-                            {
-                                arrow(30, nx[j]-15, ny[j]+dy-8);
-                            }
-                            else if(nx[i] == nx[j] + 2*num)
-                            {
-                                arrow(150, nx[j]+14, ny[j]+dy-9);
-                            }
-                            else if(nx[i] == nx[j] - 3*num)
-                            {
-                                arrow(15, nx[j]-17, ny[j]+dy-9);
-                            }
-                            else if(nx[i] == nx[j] + 3*num)
-                            {
-                                arrow(150, nx[j]+15, ny[j]+dy-12);
+                                if(nx[i] == nx[j] - num)
+                                {
+                                    arrow(70, nx[j]-14, ny[j]+dy);
+                                }
+                                else if(nx[i] == nx[j] + num)
+                                {
+                                    arrow(120, nx[j]+7, ny[j]+dy);
+                                }
+                                else if(nx[i] == nx[j] - 2*num)
+                                {
+                                    arrow(30, nx[j]-15, ny[j]+dy-8);
+                                }
+                                else if(nx[i] == nx[j] + 2*num)
+                                {
+                                    arrow(150, nx[j]+14, ny[j]+dy-9);
+                                }
+                                else if(nx[i] == nx[j] - 3*num)
+                                {
+                                    arrow(15, nx[j]-17, ny[j]+dy-9);
+                                }
+                                else if(nx[i] == nx[j] + 3*num)
+                                {
+                                    arrow(150, nx[j]+15, ny[j]+dy-12);
+                                }
                             }
                         }
                     }
@@ -423,7 +483,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT messg, WPARAM wParam, LPARAM lParam)
             }
         }
 
-        ///////////////////////// Им нет конца... \\\\\\\\\\\\\\\\\\\\\\\\\
+        ///////////////////////// Простите :( \\\\\\\\\\\\\\\\\\\\\\\\\
 
         SelectObject(hdc, BPen);
         for(i = 0; i < 12; i++)
