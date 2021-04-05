@@ -2,6 +2,8 @@
 #include<math.h>
 #include <stdio.h>
 #include <stdlib.h>
+#define n 12
+
 
 double** randmm(int rows, int cols)
 {
@@ -21,11 +23,11 @@ double** randmm(int rows, int cols)
     return matrix;
 }
 
-double** mulmr(double num, double **mat, int rows, int cols)
+double** mulmr(double num, double **mat)
 {
-    for (int i = 0; i < rows; i++)
+    for (int i = 0; i < n; i++)
     {
-        for (int j = 0; j < cols; j++)
+        for (int j = 0; j < n; j++)
         {
             mat[i][j] = mat[i][j] * num;
 
@@ -38,8 +40,6 @@ double** mulmr(double num, double **mat, int rows, int cols)
 
     return mat;
 }
-
-//
 
 
 LRESULT CALLBACK WndProc(HWND, UINT, WPARAM, LPARAM);
@@ -67,10 +67,10 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpszCmdLi
     }
 
     hWnd = CreateWindow(ProgName,
-                      "Laboratory #3. Yaroslav Tereschenko",
+                      "Laboratory #3. Yaroslav Tereschenko. Variant 2",
                       WS_OVERLAPPEDWINDOW,
                       150, 150,
-                      650, 650,
+                      800, 800,
                       (HWND)NULL, (HMENU)NULL,
                       (HINSTANCE)hInstance, (HINSTANCE)NULL);
 
@@ -92,7 +92,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT messg, WPARAM wParam, LPARAM lParam)
 
     void arrow(float fi, int px,int py)
     {
-        fi = 3.1416*(180.0 - fi)/180.0;
+        //fi = 3.1416*(180.0 - fi)/180.0;
         int lx,ly,rx,ry;
         lx = px+15*cos(fi+0.3);
         rx = px+15*cos(fi-0.3);
@@ -109,25 +109,25 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT messg, WPARAM wParam, LPARAM lParam)
         case WM_PAINT :
         hdc=BeginPaint(hWnd, &ps);
 
-        char *nn[12] = {"1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11", "12"};
-        int nx[12] = {};
-        int ny[12] = {};
-        int num = 100;
-        for(int i = 0; i < 12; i++)
+        char *nn[n] = {"1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11", "12"};
+        int nx[n] = {};
+        int ny[n] = {};
+        int num = 150;
+        for(int i = 0; i < n; i++)
         {
             if(i == 0)
             {
                 nx[i] = num;
                 ny[i] = num;
-            } else if(i < 4)
+            } else if(i <= n*0.25)
             {
                 nx[i] = nx[i - 1] + num;
                 ny[i] = ny[i - 1];
-            } else if(i < 7)
+            } else if(i <= n*0.5)
             {
                 nx[i] = nx[i - 1];
                 ny[i] = ny[i - 1] + num;
-            } else if(i < 10)
+            } else if(i <= n*0.75)
             {
                 nx[i] = nx[i - 1] - num;
                 ny[i] = ny[i - 1];
@@ -144,14 +144,14 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT messg, WPARAM wParam, LPARAM lParam)
         HPEN KPen = CreatePen(PS_SOLID, 1, RGB(20, 20, 5));
 
         srand(0423);
-        double** T = randmm(12, 12);
+        double** T = randmm(n, n);
         double coef = 1.0 - 2*0.02 - 3*0.005 - 0.25;
-        double** A = mulmr(coef, T, 12, 12);
+        double** A = mulmr(coef, T);
 
-
-        for (int i = 0; i < 12; i++)
+        printf("Matrix (directed):\n");
+        for (int i = 0; i < n; i++)
         {
-            for (int j = 0; j < 12; j++)
+            for (int j = 0; j < n; j++)
             {
                 printf("%.0f ", A[i][j]);
             }
@@ -160,81 +160,129 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT messg, WPARAM wParam, LPARAM lParam)
 
         SelectObject(hdc, KPen);
 
-        ///////////////////////// Сейчас начнеться жепа \\\\\\\\\\\\\\\\\\\\\\\\\
-
-        for(int i = 0; i < 12; i++)
+        for(int i = 0; i < n; i++)
         {
-            for(int j = 0; j < 12; j++)
+            for(int j = 0; j < n; j++)
             {
                 if(A[i][j] == 1)
                 {
                     MoveToEx(hdc, nx[i], ny[i], NULL);
 
+                    if(i == j)
+                    {
+                        if(i < n*0.25)
+                        {
+                            Arc(hdc, nx[j], ny[j], nx[j]-50, ny[j]-50, nx[j], ny[j], nx[j], ny[j]);
+                            arrow((-90*3.1416)/180, nx[j], ny[j]-dy);
+                        }
+                            else if(i < n*0.5)
+                        {
+                            Arc(hdc, nx[j], ny[j], nx[j]+50, ny[j]-50, nx[j], ny[j], nx[j], ny[j]);
+                            arrow((0*3.1416)/180, nx[j]+dx, ny[j]);
+                        }
+                            else if(i < n*0.75)
+                        {
+                            Arc(hdc, nx[j], ny[j], nx[j]+50, ny[j]+50, nx[j], ny[j], nx[j], ny[j]);
+                            arrow((90*3.1416)/180, nx[j], ny[j]+dy);
+                        }
+                            else
+                        {
+                            Arc(hdc, nx[j], ny[j], nx[j]-50, ny[j]+50, nx[j], ny[j], nx[j], ny[j]);
+                            arrow((180*3.1416)/180, nx[j]-dx, ny[j]);
+                        }
+                    }
                     if((ny[i] == ny[j]) && (nx[j] != nx[i] + num) && (nx[j] != nx[i] - num))
                     {
-
-                        if(i < 4)
+                        if(i <= n*0.25)
                         {
                             if(nx[i] < nx[j])
                             {
                                 Arc(hdc, nx[i], ny[i]-50, nx[j], ny[j]+50, nx[j], ny[j], nx[i], ny[i]);
+                                arrow((-140*3.1416)/180, nx[j]-16*cos(-45), ny[j]+16*sin(-45)-3);
                             }
                             else if(nx[i] > nx[j])
                             {
                                 Arc(hdc, nx[j], ny[j]-40, nx[i], ny[i]+40, nx[i], ny[i], nx[j], ny[j]);
+                                arrow((-25*3.1416)/180, nx[j]+dx*cos(-150), ny[j]-dy*sin(-140)-27);
                             }
                         }
-                        else if(i > 5 && i < 10)
+                        else if(i >= n*0.5 && i <= n*0.75)
                         {
                             if(nx[i] < nx[j])
                             {
                                 Arc(hdc, nx[j], ny[j]-50, nx[i], ny[i]+50, nx[i], ny[i], nx[j], ny[j]);
+                                arrow((140*3.1416)/180, nx[j]+16*cos(-45), ny[j]-16*sin(-45)+3);
                             }
                             else if(nx[i] > nx[j])
                             {
                                 Arc(hdc, nx[i], ny[i]-40, nx[j], ny[j]+40, nx[j], ny[j], nx[i], ny[i]);
+                                arrow((25*3.1416)/180, nx[j]-dx*cos(-150), ny[j]+dy*sin(-140)+27);
                             }
                         }
-
                     }
                     else if((nx[i] == nx[j]) && (ny[j] != ny[i] + num) && (ny[j] != ny[i] - num))
                     {
-
-                        if(i > 2 && i < 7)
+                        if(i >= n*0.25 && i <= n*0.5)
                         {
                             if(ny[i] < ny[j])
                             {
                                 Arc(hdc, nx[i]-40, ny[i], nx[j]+40, ny[j], nx[j], ny[j], nx[i], ny[i]);
+                                arrow((-70*3.1416)/180, nx[j]+dx*cos(-145)-2, ny[j]+dy*sin(-145)-2);
                             }
                             else if(ny[i] > ny[j])
                             {
                                 Arc(hdc, nx[j]-50, ny[j], nx[i]+50, ny[i], nx[i], ny[i], nx[j], ny[j]);
+                                arrow((45*3.1416)/180, nx[j]+dx*cos(-145), ny[j]+dy*sin(-145)+15);
                             }
                         }
-                        else if(i > 8)
+                        else if(i >= n*0.75)
                         {
                             if(ny[i] < ny[j])
                             {
                                 Arc(hdc, nx[j]-40, ny[j], nx[i]+40, ny[i], nx[i], ny[i], nx[j], ny[j]);
+                                arrow((-110*3.1416)/180, nx[j]-dx*cos(-145)+1, ny[j]-dy*sin(-145)-15);
                             }
                             else if(ny[i] > ny[j])
                             {
                                 Arc(hdc, nx[i]-40, ny[i], nx[j]+40, ny[j], nx[j], ny[j], nx[i], ny[i]);
+                                arrow((110*3.1416)/180, nx[j]-dx*cos(-145)+1, ny[j]+dy*sin(-145)+15);
                             }
                         }
-
-                    } else
+                        else if(i == 0)
+                        {
+                            Arc(hdc, nx[j]-60, ny[j], nx[i]+60, ny[i], nx[i], ny[i], nx[j], ny[j]);
+                            arrow((-130*3.1416)/180, nx[j]-dx*cos(-145)-2, ny[j]-dy*sin(-145)-12);
+                        }
+                    }
+                    else
                     {
-                        LineTo(hdc, nx[j], ny[j]);
+                        double fi = 3.141 + acos((nx[j]-nx[i])/(sqrt((nx[j]-nx[i])*(nx[j]-nx[i])+(ny[j]-ny[i])*(ny[j]-ny[i]))));
+                        if(ny[j] < ny[i]) fi *= -1;
+
+                        if(A[i][j] == A[j][i] && i < j)
+                        {
+                            MoveToEx(hdc, nx[i]+5, ny[i]+5, NULL);
+                            LineTo(hdc, nx[j]+5, ny[j]+5);
+                            arrow(fi, nx[j]+5+dx*cos(fi), ny[j]+5+dy*sin(fi));
+                        }
+                        else if(A[i][j] == A[j][i] && i > j)
+                        {
+                            MoveToEx(hdc, nx[i]-5, ny[i]-5, NULL);
+                            LineTo(hdc, nx[j]-5, ny[j]-5);
+                            arrow(fi, nx[j]-5+dx*cos(fi), ny[j]-5+dy*sin(fi));
+                        }
+                        else
+                        {
+                            LineTo(hdc, nx[j], ny[j]);
+                            arrow(fi, nx[j]+dx*cos(fi), ny[j]+dy*sin(fi));
+                        }
                     }
                 }
             }
         }
 
-        ///////////////////////// Жепа закончилась (нет) \\\\\\\\\\\\\\\\\\\\\\\\\
-
         SelectObject(hdc, BPen);
-        for(i = 0; i < 12; i++)
+        for(i = 0; i < n; i++)
         {
             Ellipse(hdc, nx[i]-dx, ny[i]-dy, nx[i]+dx, ny[i]+dy);
             if(i < 9)
